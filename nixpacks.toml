@@ -1,0 +1,29 @@
+[build]
+provider = "node"
+
+[phases.setup]
+nixPkgs = ["nodejs-18_x"]
+aptPkgs = ["build-essential"]
+
+[phases.install]
+cmds = [
+  "mkdir -p /usr/local/lib/node_modules",
+  "npm config set prefix '/usr/local'",
+  "npm install -g pnpm@latest",
+  "rm -f /usr/local/bin/pnpm",
+  "ln -sf /usr/local/lib/node_modules/pnpm/bin/pnpm.cjs /usr/local/bin/pnpm",
+  "pnpm config set auto-install-peers true",
+  "pnpm install"
+]
+
+[phases.build]
+cmds = ["pnpm run build:production"]
+
+[start]
+cmd = "pnpm start"
+runImage = "ubuntu:22.04"
+
+[variables]
+NODE_ENV = "production"
+NIXPACKS_NODE_VERSION = "18.x"
+PORT = "3000"
